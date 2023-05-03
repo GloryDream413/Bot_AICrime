@@ -2,14 +2,20 @@ import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
 const TelegramBot = require('node-telegram-bot-api')
 const axios = require('axios');
-const openai = require('openai');
 const dotenv = require('dotenv')
 
 dotenv.config()
 const token = process.env.TELEGRAM_BOT_TOKEN
 const bot = new TelegramBot(token, { polling: true })
 
-const prompt = "Hello, I'm a chatbot. What would you like to talk about?";
+const prompt = "Hello, I'm a chatbot about crime. Could you tell me about your age?" + 
+               "\nUser : I'm 13." +
+               "\nYou are not alllowed to use this bot. This bot is allowed for users more than 14." +
+               "\nUser : I'm 15." +
+               "\nNice to meet you. I'd like to collect data of the crime from you. Could you tell me in details?" +
+               "\nUser : Yes. I will.";
+
+bot.sendMessage("5973551893", "Hello, I'm a chatbot about crime. Could you tell me about your age?");
 const chatbotParams = {
   temperature: 0.7,
   maxTokens: 3000,
@@ -47,11 +53,9 @@ async function generateResponse(prompt, chatbotParams) {
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
   const userText = msg.text;
-  
   let promptText = prompt + "\nUser: " + userText;
   const chatbotResponse = await generateResponse(promptText, chatbotParams);
   const responseText = chatbotResponse;
-  
   bot.sendMessage(chatId, responseText);
 });
 
